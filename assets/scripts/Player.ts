@@ -37,7 +37,7 @@ export class PlayerController extends Component {
 
   // 最大移动速度
   private _maxMoveSpeed: number = 300;
-  private _xSpeed: number = 0;
+  private _xSpeed: number = 10;
   // 加速度
   private _accel: number = 800;
   private _accLeft: boolean = false;
@@ -53,25 +53,34 @@ export class PlayerController extends Component {
     // [3]
   }
 
-  // update (deltaTime: number) {
-  //     // [4]
-  // }
+  update(dt: number) {
+    if (this._accLeft) {
+      this._xSpeed -= this._accel * dt;
+    }
+    if (this._accRight) {
+      this._xSpeed += this._accel * dt;
+    }
+    if (this._xSpeed) {
+      this.node.position = this.node.position.add3f(this._xSpeed, 0, 0);
+    }
+  }
 
   runJumpAction() {
     // 跳跃上升
-    var jumpUp = tween().by(
+    var jumpUp = tween(this.node).by(
       this._jumpDuration,
-      { position: v3(0, this._jumpHeight) },
+      { position: v3(this.node.position.x, this._jumpHeight) },
       { easing: "sineOut" }
     );
     // 下落
-    var jumpDown = tween().by(
+    var jumpDown = tween(this.node).by(
       this._jumpDuration,
-      { position: v3(0, -this._jumpHeight) },
+      { position: v3(this.node.position.x, -this._jumpHeight) },
       { easing: "sineIn" }
     );
     // 不断重复
-    tween(this.node).sequence(jumpUp, jumpDown).repeatForever().start();
+    // tween(this.node).sequence(jumpUp, jumpDown).repeatForever().start();
+    tween(this.node).sequence(jumpUp, jumpDown).repeat(5).start();
   }
 
   onKeyDownCallback(event: EventKeyboard) {
@@ -114,21 +123,6 @@ export class PlayerController extends Component {
   deregisterKeyBoardEvent() {
     systemEvent.off(SystemEvent.EventType.KEY_DOWN, null, this);
     systemEvent.off(SystemEvent.EventType.KEY_UP, null, this);
-  }
-
-  update(dt: number) {
-    if (this._accLeft) {
-      this._xSpeed -= this._accel * dt;
-    }
-    if (this._accRight) {
-      this._xSpeed += this._accel * dt;
-    }
-    if (this._xSpeed) {
-      this.node.setPosition(
-        v3(this.node.position.x + this._xSpeed * dt, this.node.position.y, 0)
-      );
-      console.log(this.node.position.x, this.node.position.y);
-    }
   }
 
   onDestroy() {
