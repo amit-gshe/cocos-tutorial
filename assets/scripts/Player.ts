@@ -80,7 +80,7 @@ export class PlayerController extends Component {
     );
     // 不断重复
     // tween(this.node).sequence(jumpUp, jumpDown).repeatForever().start();
-    tween(this.node).sequence(jumpUp, jumpDown).repeat(5).start();
+    tween(this.node).sequence(jumpUp, jumpDown).repeat(3).start();
   }
 
   onKeyDownCallback(event: EventKeyboard) {
