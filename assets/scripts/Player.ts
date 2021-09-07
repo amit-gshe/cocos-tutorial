@@ -1,9 +1,4 @@
-import {
-  _decorator,
-  Component,
-  tween,
-  v3,
-} from "cc";
+import { _decorator, Component, tween, v3 } from "cc";
 const { ccclass } = _decorator;
 
 /**
@@ -50,13 +45,13 @@ export class PlayerController extends Component {
     // 跳跃上升
     var jumpUp = tween(this.node).by(
       this._jumpDuration,
-      { position: v3(this.node.position.x, this._jumpHeight, 0) },
+      { position: v3(0, this._jumpHeight, 0) },
       { easing: "sineOut" }
     );
     // 下落
     var jumpDown = tween(this.node).by(
       this._jumpDuration,
-      { position: v3(this.node.position.x, -this._jumpHeight, 0) },
+      { position: v3(0, -this._jumpHeight, 0) },
       { easing: "sineIn" }
     );
     // 不断重复
