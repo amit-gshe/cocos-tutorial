@@ -35,18 +35,11 @@ export class PlayerController extends Component {
   // 主角跳跃持续时间
   private _jumpDuration: number = 0.3;
 
-  // 最大移动速度
-  private _maxMoveSpeed: number = 300;
   private _xSpeed: number = 10;
-  // 加速度
-  private _accel: number = 800;
-  private _accLeft: boolean = false;
-  private _accRight: boolean = false;
 
   onLoad() {
     // 初始化跳跃动作
     this.runJumpAction();
-    this.registerKeyBoardEvent();
   }
 
   start() {
@@ -54,79 +47,25 @@ export class PlayerController extends Component {
   }
 
   update(dt: number) {
-    if (this._accLeft) {
-      this._xSpeed -= this._accel * dt;
-    }
-    if (this._accRight) {
-      this._xSpeed += this._accel * dt;
-    }
-    if (this._xSpeed) {
-      this.node.position = this.node.position.add3f(this._xSpeed, 0, 0);
-    }
+    this.node.position = this.node.position.add3f(this._xSpeed, 0, 0);
   }
 
   runJumpAction() {
     // 跳跃上升
     var jumpUp = tween(this.node).by(
       this._jumpDuration,
-      { position: v3(this.node.position.x, this._jumpHeight) },
+      { position: v3(this.node.position.x, this._jumpHeight, 0) },
       { easing: "sineOut" }
     );
     // 下落
     var jumpDown = tween(this.node).by(
       this._jumpDuration,
-      { position: v3(this.node.position.x, -this._jumpHeight) },
+      { position: v3(this.node.position.x, -this._jumpHeight, 0) },
       { easing: "sineIn" }
     );
     // 不断重复
     // tween(this.node).sequence(jumpUp, jumpDown).repeatForever().start();
-    tween(this.node).sequence(jumpUp, jumpDown).repeat(3).start();
-  }
-
-  onKeyDownCallback(event: EventKeyboard) {
-    console.log(event.keyCode, "key down");
-    switch (event.keyCode) {
-      case KeyCode.KEY_A:
-        this._accLeft = true;
-        break;
-      case KeyCode.KEY_D:
-        this._accRight = true;
-        break;
-    }
-  }
-
-  onKeyUpCallback(event: EventKeyboard) {
-    console.log(event.keyCode, "key up");
-    switch (event.keyCode) {
-      case KeyCode.KEY_A:
-        this._accLeft = false;
-        break;
-      case KeyCode.KEY_D:
-        this._accRight = false;
-        break;
-    }
-  }
-
-  registerKeyBoardEvent() {
-    systemEvent.on(
-      SystemEvent.EventType.KEY_DOWN,
-      (event) => this.onKeyDownCallback(event),
-      this
-    );
-    systemEvent.on(
-      SystemEvent.EventType.KEY_UP,
-      (event) => this.onKeyUpCallback(event),
-      this
-    );
-  }
-
-  deregisterKeyBoardEvent() {
-    systemEvent.off(SystemEvent.EventType.KEY_DOWN, null, this);
-    systemEvent.off(SystemEvent.EventType.KEY_UP, null, this);
-  }
-
-  onDestroy() {
-    this.deregisterKeyBoardEvent();
+    tween(this.node).sequence(jumpUp, jumpDown).repeat(5).start();
   }
 }
 
