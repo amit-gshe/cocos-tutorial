@@ -1,14 +1,13 @@
 import {
   _decorator,
   Component,
-  tween,
-  v3,
   systemEvent,
   SystemEvent,
   KeyCode,
   EventKeyboard,
+  CCInteger,
 } from "cc";
-const { ccclass } = _decorator;
+const { ccclass, type } = _decorator;
 
 /**
  * Predefined variables
@@ -23,7 +22,7 @@ const { ccclass } = _decorator;
  */
 
 @ccclass("Player")
-export class PlayerController extends Component {
+export class Player extends Component {
   // [1]
   // dummy = '';
 
@@ -31,21 +30,19 @@ export class PlayerController extends Component {
   // @property
   // serializableDummy = 0;
 
-  private _jumpHeight: number = 200;
-  // 主角跳跃持续时间
-  private _jumpDuration: number = 0.3;
+  @type(CCInteger)
+  public jumpHeight: number = 30;
 
   // 最大移动速度
-  private _maxMoveSpeed: number = 300;
-  private _xSpeed: number = 10;
+  private _maxMoveSpeed: number = 5;
+  private _xSpeed: number = 0;
   // 加速度
-  private _accel: number = 800;
+  private _accel: number = 100;
   private _accLeft: boolean = false;
   private _accRight: boolean = false;
 
   onLoad() {
     // 初始化跳跃动作
-    this.runJumpAction();
     this.registerKeyBoardEvent();
   }
 
@@ -60,27 +57,14 @@ export class PlayerController extends Component {
     if (this._accRight) {
       this._xSpeed += this._accel * dt;
     }
+
+    if (Math.abs(this._xSpeed) > this._maxMoveSpeed) {
+      this._xSpeed =
+        this._xSpeed > 0 ? this._maxMoveSpeed : -this._maxMoveSpeed;
+    }
     if (this._xSpeed) {
       this.node.position = this.node.position.add3f(this._xSpeed, 0, 0);
     }
-  }
-
-  runJumpAction() {
-    // 跳跃上升
-    var jumpUp = tween(this.node).by(
-      this._jumpDuration,
-      { position: v3(this.node.position.x, this._jumpHeight) },
-      { easing: "sineOut" }
-    );
-    // 下落
-    var jumpDown = tween(this.node).by(
-      this._jumpDuration,
-      { position: v3(this.node.position.x, -this._jumpHeight) },
-      { easing: "sineIn" }
-    );
-    // 不断重复
-    // tween(this.node).sequence(jumpUp, jumpDown).repeatForever().start();
-    tween(this.node).sequence(jumpUp, jumpDown).repeat(3).start();
   }
 
   onKeyDownCallback(event: EventKeyboard) {
