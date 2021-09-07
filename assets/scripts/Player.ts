@@ -3,10 +3,6 @@ import {
   Component,
   tween,
   v3,
-  systemEvent,
-  SystemEvent,
-  KeyCode,
-  EventKeyboard,
 } from "cc";
 const { ccclass } = _decorator;
 
